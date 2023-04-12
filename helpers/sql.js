@@ -1,4 +1,4 @@
-const { BadRequestError } = require("../expressError");
+const { BadRequestError } = require('../expressError');
 
 // THIS NEEDS SOME GREAT DOCUMENTATION.
 /** Takes in an object to update and an object that translates JS to SQL
@@ -8,20 +8,28 @@ const { BadRequestError } = require("../expressError");
  *  that will become the new field values in the database
  *
  * throws error if no data is provided
-  */
+ */
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
-  const keys = Object.keys(dataToUpdate);
-  if (keys.length === 0) throw new BadRequestError("No data");
+	const keys = Object.keys(dataToUpdate);
+	if (keys.length === 0) throw new BadRequestError('No data');
 
-  // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
-  const cols = keys.map((colName, idx) =>
-      `"${jsToSql[colName] || colName}"=$${idx + 1}`,
-  );
+	// {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
+	const cols = keys.map(
+		(colName, idx) => `"${jsToSql[colName] || colName}"=$${idx + 1}`
+	);
 
-  return {
-    setCols: cols.join(", "),
-    values: Object.values(dataToUpdate),
-  };
+	return {
+		setCols: cols.join(', '),
+		values: Object.values(dataToUpdate),
+	};
+}
+
+/** Return SQL to populate WHERE clause in search-related SQL queries.
+ *
+ * Returns: "handle ILIKE '%net%' AND num_employees >= 1";
+ */
+function sqlForSearchFilters(dataToSearch, jsToSql) {
+  
 }
 
 module.exports = { sqlForPartialUpdate };

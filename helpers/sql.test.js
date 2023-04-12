@@ -38,3 +38,13 @@ describe('sqlForPartialUpdate', function () {
 		}
 	});
 });
+
+describe('sqlForSearchFilters', function () {
+  test('returns a string')
+  test('correctly handles one query parameter')
+  test('correctly handles multiple query parameters')
+
+  test('throws bad request error if dataToSearch is empty')
+  test("throws BadRequestError if minEmployees > maxEmployees")
+  test("throws BadRequestError if passed erroneous fields")
+});
