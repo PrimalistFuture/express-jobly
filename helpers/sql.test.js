@@ -66,13 +66,16 @@ describe('sqlForSearchFilters', function () {
 		const result = sqlForSearchFilters(searchFilter);
 		expect(result.values.length).toEqual(1);
 		expect(result.where).toEqual('num_employees >= $1');
-	})
+
+		const result2 = sqlForSearchFilters({maxEmployees:2});
+		expect(result2.where).toEqual('num_employees <= $1');
+	});
+
   test('correctly handles multiple query parameters', function () {
 		const result = sqlForSearchFilters(multipleSearchFilter);
 		expect(result.values.length).toEqual(2);
 		expect(result.where).toEqual(
-			`handle ILIKE '%'|| $1 || '%'
-			AND num_employees >= $2`
+			`handle ILIKE '%'|| $1 ||'%' AND num_employees >= $2`
 		);
 	})
 
