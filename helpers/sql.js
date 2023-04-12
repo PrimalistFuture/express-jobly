@@ -25,11 +25,15 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 }
 
 /** Return SQL to populate WHERE clause in search-related SQL queries.
+ * Accepts two objects, the first is the search filter and
  *
- * Returns: "handle ILIKE '%net%' AND num_employees >= 1";
+ * RETURNS: {where: "handle ILIKE '%'|| $1 || '%' AND num_employees >= $2"
+ * 						values:['net', 20]
+ * 					};
+ *
  */
-function sqlForSearchFilters(dataToSearch, jsToSql) {
-  
+function sqlForSearchFilters(dataToSearch) {
+// [>==, <=, 'ILIKE']
 }
 
-module.exports = { sqlForPartialUpdate };
+module.exports = { sqlForPartialUpdate, sqlForSearchFilters };
