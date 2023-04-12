@@ -66,6 +66,15 @@ class Company {
     return companiesRes.rows;
   }
 
+  /** Find all companies that match given criteria.
+   *
+   * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
+   */
+
+  static async findWhere(...criteria) {
+
+  }
+
   /** Given a company handle, return data about company.
    *
    * Returns { handle, name, description, numEmployees, logoUrl, jobs }

@@ -87,6 +87,17 @@ describe("findAll", function () {
   });
 });
 
+/************************************** findWhere */
+
+describe("findWhere", function () {
+  test("returns array of companies")
+  test("returns array of companies matching nameLike (case insensitive)")
+  test("returns array of companies given minEmployees")
+  test("returns array of companies given maxEmployees")
+
+  test("throws NotFoundError no results meet criteria")
+});
+
 /************************************** get */
 
 describe("get", function () {
