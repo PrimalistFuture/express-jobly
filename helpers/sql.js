@@ -40,12 +40,14 @@ function sqlForSearchFilters(dataToSearch) {
 
 	const validFields = ['minEmployees', 'maxEmployees', 'nameLike'];
 
+	// TODO: Would using schema validation be better here?
 	if (dataToSearch?.minEmployees > dataToSearch?.maxEmployees) {
 		throw new BadRequestError('Min employees cannot exceed max employees.');
 	}
 
 	const templateArray = keys.map((criteria, index) => {
-		if (!validFields.includes(criteria)) throw new BadRequestError('Invalid search criteria');
+		if (!validFields.includes(criteria))
+			throw new BadRequestError('Invalid search criteria');
 		const param = index + 1;
 		if (criteria === 'nameLike') {
 			return `handle ILIKE '%'|| $${param} ||'%'`;
@@ -58,9 +60,8 @@ function sqlForSearchFilters(dataToSearch) {
 
 	return {
 		where: templateArray.join(' AND '),
-		values: Object.values(dataToSearch)
+		values: Object.values(dataToSearch),
 	};
-
 }
 
 module.exports = { sqlForPartialUpdate, sqlForSearchFilters };
