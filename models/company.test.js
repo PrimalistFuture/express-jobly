@@ -89,10 +89,10 @@ describe('findAll', function () {
 });
 
 /************************************** findWhere */
-
+//TODO: test the full output, not just part of it
 describe('findWhere', function () {
 	test('returns array of companies', async function () {
-		const companies = await Company.findWhere({ nameLike: 'net' });
+		const companies = await Company.findWhere({ nameLike: 'c' });
 		expect(Array.isArray(companies)).toEqual(true);
 	});
 
@@ -115,6 +115,7 @@ describe('findWhere', function () {
 	test('throws NotFoundError no results meet criteria', async function () {
 		try {
 			const companies = await Company.findWhere({ nameLike: 'Apple' });
+      console.log(companies)
 			throw Error('Fail Test: No Results');
 		} catch (error) {
 			expect(error instanceof NotFoundError).toBeTruthy();

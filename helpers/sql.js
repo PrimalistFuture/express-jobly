@@ -26,7 +26,7 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
 
 /** Return SQL to populate WHERE clause in search-related SQL queries.
  *  Accept one object, the search filter criteria
- *
+ *  TODO: not arbitary, give it the 3rd one too
  * 	ACCEPTS: { nameLike: "net", minEmployees: 20 }
  *
  *  RETURNS: { where: "handle ILIKE '%'|| $1 || '%' AND num_employees >= $2",
@@ -34,6 +34,8 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
  * 					 };
  *
  */
+//TODO: rename and put in companies model as it is
+//not general purpose enough for this file
 function sqlForSearchFilters(dataToSearch) {
 	const keys = Object.keys(dataToSearch);
 	if (keys.length === 0) throw new BadRequestError('No data');
@@ -48,6 +50,7 @@ function sqlForSearchFilters(dataToSearch) {
 	const templateArray = keys.map((criteria, index) => {
 		if (!validFields.includes(criteria))
 			throw new BadRequestError('Invalid search criteria');
+			//TODO: param is not entirely true, should be num
 		const param = index + 1;
 		if (criteria === 'nameLike') {
 			return `handle ILIKE '%'|| $${param} ||'%'`;

@@ -11,24 +11,9 @@ const jsToSql = {
 	logoUrl: 'logo_url',
 };
 
-const searchFilter = {
-	minEmployees: 1,
-};
 
-const multipleSearchFilter = {
-	nameLike: 'net',
-	minEmployees: 30,
-};
-
-const misassignedEmployees = {
-	maxEmployees: 10,
-	minEmployees: 30,
-};
-
-const description = {
-	description: 'Chill family-like atmosphere'
-};
-
+//TODO: check jsToSQL
+// Combine some tests to see the result in total
 describe('sqlForPartialUpdate', function () {
 	test('returns an object', function () {
 		const result = sqlForPartialUpdate(data, jsToSql);
@@ -57,11 +42,31 @@ describe('sqlForPartialUpdate', function () {
 	});
 });
 
+const searchFilter = {
+	minEmployees: 1,
+};
+
+const multipleSearchFilter = {
+	nameLike: 'net',
+	minEmployees: 30,
+};
+
+const misassignedEmployees = {
+	maxEmployees: 10,
+	minEmployees: 30,
+};
+
+const description = {
+	description: 'Chill family-like atmosphere'
+};
+
 describe('sqlForSearchFilters', function () {
   test('returns a object', function () {
 		const result = sqlForSearchFilters(searchFilter);
 		expect(typeof result).toBe('object');
 	});
+
+	//TODO: test the total output
   test('correctly handles one query parameter', function () {
 		const result = sqlForSearchFilters(searchFilter);
 		expect(result.values.length).toEqual(1);
@@ -70,7 +75,7 @@ describe('sqlForSearchFilters', function () {
 		const result2 = sqlForSearchFilters({maxEmployees:2});
 		expect(result2.where).toEqual('num_employees <= $1');
 	});
-
+	//TODO: define test data in line
   test('correctly handles multiple query parameters', function () {
 		const result = sqlForSearchFilters(multipleSearchFilter);
 		expect(result.values.length).toEqual(2);

@@ -2,7 +2,7 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate } = require("../helpers/sql");
+const { sqlForPartialUpdate, sqlForSearchFilters } = require("../helpers/sql");
 
 /** Related functions for companies. */
 
@@ -66,13 +66,30 @@ class Company {
     return companiesRes.rows;
   }
 
-  /** Find all companies that match given criteria.
-   *
+  /** Find all companies that match given criteria object.
+   * //TODO: still only accepts the three things
+   * Accepts {maxEmployees: 2, nameLike: 'c1'}
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    */
 
-  static async findWhere(...criteria) {
+  static async findWhere(criteria) {
+    const { where, values } = sqlForSearchFilters(
+      criteria
+    )
+    const companiesRes = await db.query(
+      `SELECT handle,
+              name,
+              description,
+              num_employees AS "numEmployees",
+              logo_url AS "logoUrl"
+        FROM companies
+        WHERE ${where}`, values
+    );
+    const company = companiesRes.rows;
 
+    if (company.length === 0) throw new NotFoundError('No companies match the criteria');
+
+    return company;
   }
 
   /** Given a company handle, return data about company.
