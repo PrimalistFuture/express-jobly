@@ -112,12 +112,9 @@ describe('GET /companies', function () {
   });
 
   test('throws BadRequestError given invalid params', async function () {
-    try {
       const resp = await request(app).get('/companies?description=Chill');
-      throw new Error('Fail Test: bad field');
-    } catch (error) {
-      expect(error instanceof BadRequestError).toBeTruthy();
-    }
+			expect(resp.statusCode).toEqual(400);
+
   });
 
 	test('fails: test next() handler', async function () {
