@@ -68,7 +68,7 @@ describe('ensureAdminUser', function () {
 		ensureAdminUser(req, res, next);
 	});
 
-	// NOTE: No expect statement?
+  // TODO: Adding a negative test for when there is no user
 
 	test('unauth if not admin', function () {
 		const req = {};
@@ -84,15 +84,13 @@ describe('ensureCurrentOrAdmin', function () {
 		ensureCurrentOrAdmin(req, res, next);
 	});
 
-  	// NOTE: No expect statement?
-
 	test('works if current user but not admin', function () {
     const req = { params: { username : 'u1' } };
 		const res = { locals: { user: { username: 'u1', isAdmin: false } } };
 		ensureCurrentOrAdmin(req, res, next);
   });
 
-  	// NOTE: No expect statement?
+  // TODO: Adding a negative test for when there is no user
 
 	test('unauth if neither current current user nor admin', function () {
     const req = { params: { username : 'u1' } };

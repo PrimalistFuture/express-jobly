@@ -42,6 +42,8 @@ function ensureLoggedIn(req, res, next) {
  * Middleware to check that users are admins.
  *
  * If not, throw UnauthorizedError
+ *
+ * TODO: Add check for user in locals before the isAdmin check
  */
 function ensureAdminUser(req, res, next) {
   if (res.locals.user.isAdmin === true) {
@@ -55,6 +57,8 @@ function ensureAdminUser(req, res, next) {
  * Middleware to check if current user or admin.
  *
  * If not, throw UnauthorizedError
+ *
+ * TODO: Add check for user in locals before the isAdmin and username check
  */
 function ensureCurrentOrAdmin(req, res, next) {
   const currentUsername = req.params.username;

@@ -116,6 +116,8 @@ describe('POST /users', function () {
 		expect(resp.statusCode).toEqual(401);
 	});
 
+  // TODO: Add negative test for non-admin user
+
 	test('bad request if missing data', async function () {
 		const resp = await request(app)
 			.post('/users')
@@ -125,6 +127,8 @@ describe('POST /users', function () {
 			.set('authorization', `Bearer ${u4Token}`);
 		expect(resp.statusCode).toEqual(400);
 	});
+
+  // TODO: Add negative test for non-admin user
 
 	test('bad request if invalid data', async function () {
 		const resp = await request(app)
@@ -252,6 +256,8 @@ describe('GET /users/:username', function () {
 		expect(resp.statusCode).toEqual(401);
 	});
 
+  // TODO: Add negative test for non-admin user
+
 	test('not found if user not found', async function () {
 		const resp = await request(app)
 			.get(`/users/nope`)
@@ -315,6 +321,8 @@ describe('PATCH /users/:username', () => {
 		expect(resp.statusCode).toEqual(401);
 	});
 
+  // TODO: Add negative test for non-admin user
+
 	test('not found if no such user', async function () {
 		const resp = await request(app)
 			.patch(`/users/nope`)
@@ -324,6 +332,8 @@ describe('PATCH /users/:username', () => {
 			.set('authorization', `Bearer ${u4Token}`);
 		expect(resp.statusCode).toEqual(404);
 	});
+
+  // TODO: Add negative test for non-admin user
 
 	test('bad request if invalid data', async function () {
 		const resp = await request(app)
@@ -382,8 +392,7 @@ describe('PATCH /users/:username', () => {
 			})
 			.set('authorization', `Bearer ${u2Token}`);
 		expect(resp.statusCode).toEqual(401);
-		// NOTE - Leaving out User.authenticate test which was included above
-		// because we're not trying to test the model here.
+    // TODO: Include the User.authenticate test
 	});
 });
 
@@ -415,6 +424,8 @@ describe('DELETE /users/:username', function () {
 		const resp = await request(app).delete(`/users/u1`);
 		expect(resp.statusCode).toEqual(401);
 	});
+
+  // TODO: Add 401 test for non-admin user
 
 	test('not found if user missing', async function () {
 		const resp = await request(app)

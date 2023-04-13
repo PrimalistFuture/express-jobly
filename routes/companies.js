@@ -24,7 +24,7 @@ const router = new express.Router();
  *
  * Authorization required: login, isAdmin
  */
-
+ // TODO: Can remove ensureLoggedIn once we update ensureAdminUser
 router.post("/", ensureLoggedIn, ensureAdminUser, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,

@@ -42,6 +42,9 @@ describe('POST /companies', function () {
 		});
 	});
 
+	// TODO: Add 401 test for non-admin
+	// TODO: Can also add expectation RE language in the error body
+
 	test('bad request with missing data', async function () {
 		const resp = await request(app)
 			.post('/companies')
@@ -52,6 +55,8 @@ describe('POST /companies', function () {
 			.set('authorization', `Bearer ${u4Token}`);
 		expect(resp.statusCode).toEqual(400);
 	});
+
+	// TODO: Add 401 test for non-admin
 
 	test('bad request with invalid data', async function () {
 		const resp = await request(app)
@@ -210,6 +215,8 @@ describe('PATCH /companies/:handle', function () {
 		expect(resp.statusCode).toEqual(401);
 	});
 
+	// TODO: Add 401 test for non-admin
+
 	test('not found on no such company', async function () {
 		const resp = await request(app)
 			.patch(`/companies/nope`)
@@ -220,6 +227,8 @@ describe('PATCH /companies/:handle', function () {
 		expect(resp.statusCode).toEqual(404);
 	});
 
+	// TODO: Add 401 test for non-admin
+
 	test('bad request on handle change attempt', async function () {
 		const resp = await request(app)
 			.patch(`/companies/c1`)
@@ -229,6 +238,8 @@ describe('PATCH /companies/:handle', function () {
 			.set('authorization', `Bearer ${u4Token}`);
 		expect(resp.statusCode).toEqual(400);
 	});
+
+	// TODO: Add 401 test for non-admin
 
 	test('bad request on invalid data', async function () {
 		const resp = await request(app)
@@ -251,18 +262,19 @@ describe('DELETE /companies/:handle', function () {
 		expect(resp.body).toEqual({ deleted: 'c1' });
 	});
 
-  test('unauth for non-admin', async function () {
+	test('unauth for non-admin', async function () {
 		const resp = await request(app)
 			.delete(`/companies/c1`)
 			.set('authorization', `Bearer ${u1Token}`);
-      expect(resp.statusCode).toEqual(401);
+		expect(resp.statusCode).toEqual(401);
 	});
-
 
 	test('unauth for anon', async function () {
 		const resp = await request(app).delete(`/companies/c1`);
 		expect(resp.statusCode).toEqual(401);
 	});
+
+	// TODO: Add 401 test for non-admin
 
 	test('not found for no such company', async function () {
 		const resp = await request(app)

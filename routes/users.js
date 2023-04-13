@@ -53,7 +53,7 @@ router.post(
  *
  * Returns list of all users.
  *
- * Authorization required: login
+ * Authorization required: login, isAdmin
  **/
 
 router.get(
