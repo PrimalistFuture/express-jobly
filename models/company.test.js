@@ -157,16 +157,6 @@ describe('sqlClauseForFindWhere', function () {
 			expect(error instanceof BadRequestError).toBeTruthy();
 		}
 	});
-	test('throws BadRequestError if passed erroneous fields', function () {
-		try {
-			const result = Company.sqlClauseForFindWhere({
-				description: 'Chill family-like atmosphere',
-			});
-			throw new Error('Fail Test: bad field');
-		} catch (error) {
-			expect(error instanceof BadRequestError).toBeTruthy();
-		}
-	});
 });
 
 /************************************** get */

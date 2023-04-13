@@ -36,21 +36,3 @@ describe('sqlForPartialUpdate', function () {
 		}
 	});
 });
-
-const searchFilter = {
-	minEmployees: 1,
-};
-
-const multipleSearchFilter = {
-	nameLike: 'net',
-	minEmployees: 30,
-};
-
-const misassignedEmployees = {
-	maxEmployees: 10,
-	minEmployees: 30,
-};
-
-const description = {
-	description: 'Chill family-like atmosphere',
-};
