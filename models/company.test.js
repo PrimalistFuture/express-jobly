@@ -89,36 +89,82 @@ describe('findAll', function () {
 });
 
 /************************************** findWhere */
-//TODO: test the full output, not just part of it
 describe('findWhere', function () {
-	test('returns array of companies', async function () {
-		const companies = await Company.findWhere({ nameLike: 'c' });
+	test('works: returns array of companies', async function () {
+		const companies = await Company.findWhere({ nameLike: 'c2' });
+		expect(companies).toEqual([
+			{
+				handle: 'c2',
+				name: 'C2',
+				description: 'Desc2',
+				numEmployees: 2,
+				logoUrl: 'http://c2.img',
+			},
+		]);
 		expect(Array.isArray(companies)).toEqual(true);
-	});
-
-	test('returns array of companies matching nameLike (case insensitive)', async function () {
-		const companies = await Company.findWhere({ nameLike: 'C2' });
-		expect(companies.length).toEqual(1);
-		expect(companies[0].handle).toEqual('c2');
-	});
-
-	test('returns array of companies given minEmployees', async function () {
-		const companies = await Company.findWhere({ minEmployees: 2 });
-		expect(companies.length).toEqual(2);
-	});
-
-	test('returns array of companies given maxEmployees', async function () {
-		const companies = await Company.findWhere({ maxEmployees: 2 });
-		expect(companies.length).toEqual(2);
 	});
 
 	test('throws NotFoundError no results meet criteria', async function () {
 		try {
 			const companies = await Company.findWhere({ nameLike: 'Apple' });
-      console.log(companies)
+			console.log(companies);
 			throw Error('Fail Test: No Results');
 		} catch (error) {
 			expect(error instanceof NotFoundError).toBeTruthy();
+		}
+	});
+});
+
+/************************************** Company.sqlClauseForFindWhere */
+
+describe('sqlClauseForFindWhere', function () {
+	test('works: for one query parameter', function () {
+		const result = Company.sqlClauseForFindWhere({
+			minEmployees: 1,
+		});
+		expect(result).toEqual({ where: 'num_employees >= $1', values: [1] });
+	});
+
+	test('works: for multiple query parameters', function () {
+		const result = Company.sqlClauseForFindWhere({
+			minEmployees: 1,
+			maxEmployees: 3,
+			nameLike: '2',
+		});
+		expect(result).toEqual({
+			where:
+				"num_employees >= $1 AND num_employees <= $2 AND handle ILIKE '%'|| $3 ||'%'",
+			values: [1, 3, '2'],
+		});
+	});
+
+	test('throws bad request error if dataToSearch is empty', function () {
+		try {
+			const result = Company.sqlClauseForFindWhere({});
+			throw new Error('Fail Test: no data');
+		} catch (error) {
+			expect(error instanceof BadRequestError).toBeTruthy();
+		}
+	});
+	test('throws BadRequestError if minEmployees > maxEmployees', function () {
+		try {
+			const result = Company.sqlClauseForFindWhere({
+				maxEmployees: 10,
+				minEmployees: 30,
+			});
+			throw new Error('Fail Test: no data');
+		} catch (error) {
+			expect(error instanceof BadRequestError).toBeTruthy();
+		}
+	});
+	test('throws BadRequestError if passed erroneous fields', function () {
+		try {
+			const result = Company.sqlClauseForFindWhere({
+				description: 'Chill family-like atmosphere',
+			});
+			throw new Error('Fail Test: bad field');
+		} catch (error) {
+			expect(error instanceof BadRequestError).toBeTruthy();
 		}
 	});
 });
