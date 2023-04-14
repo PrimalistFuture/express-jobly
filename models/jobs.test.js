@@ -11,7 +11,19 @@ const {
 	jobIds,
 } = require('./_testCommon');
 
+let paperGirlId;
 beforeAll(commonBeforeAll);
+
+beforeAll(async () =>
+{const result = await db.query(`
+  SELECT id
+  FROM jobs
+  WHERE title = 'Paper Girl'
+  LIMIT 1;`
+  );
+paperGirlId = result.rows[0].id;
+});
+
 beforeEach(commonBeforeEach);
 afterEach(commonAfterEach);
 afterAll(commonAfterAll);
@@ -179,14 +191,7 @@ describe('get', function () {
 
 /************************************** update */
 
-describe('update', async function () {
-	const paperGirlId = await db.query(`
-  SELECT id
-    FROM jobs
-   WHERE title = 'Paper Girl'
-   LIMIT 1;
-`);
-
+describe('update', function () {
 	test('works', async function () {
 		const updateData = {
 			title: 'CEO',
@@ -297,7 +302,26 @@ describe('update', async function () {
 /************************************** remove */
 
 describe('remove', function () {
-	test('works', async function () {});
+	test('works', async function () {
+    await Job.remove(paperGirlId);
+    const result = db.query(`
+      SELECT id
+        FROM jobs
+        WHERE id = $1`,
+        [paperGirlId])
 
-	test('not found if no such job', async function () {});
+    expect(result.rows.length).toEqual(0);
+  });
+
+	test('not found if no such job', async function () {
+    const maxId = await db.query(`
+    SELECT MAX(id)
+      FROM jobs;`);
+    try {
+      await Job.remove(maxId + 1);
+      throw new Error('Fail test, line should never run');
+    } catch (error) {
+      expect(error instanceof NotFoundError).toBeTruthy();
+    }
+  });
 });

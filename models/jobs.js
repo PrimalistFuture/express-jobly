@@ -173,11 +173,11 @@ class Job {
     return company;
   }
 
-  /** Delete given job from database; returns undefined.
+  /** Delete given job from database based on id; returns undefined.
    *
    * Throws NotFoundError if company not found.
    **/
-  static async remove(handle) {
+  static async remove(id) {
     // const result = await db.query(
     //   `DELETE
     //        FROM companies
