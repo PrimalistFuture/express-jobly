@@ -33,7 +33,7 @@ async function commonBeforeAll() {
         await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
         await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
       ]);
-
+  console.log('inserting jobs')
   await db.query(`INSERT INTO jobs(title, salary, equity, company_handle)
                   VALUES ('Paper Boy', 20000, 0.005, 'c1'),
                           ('Paper Girl', 30000, 0.1, 'c2'),
@@ -41,7 +41,7 @@ async function commonBeforeAll() {
                           ('Paper Woman', 10000, 0.005, 'c1')
                   RETURNING id`
                 );
-
+console.log('finished inserting jobs')
 
   const jobId = await db.query(`SELECT id FROM jobs WHERE title = 'Paper Girl'`);
   jobIds.push(jobId);
@@ -60,6 +60,8 @@ async function commonAfterAll() {
   await db.end();
 }
 
+// let allCompanies = await db.query(`SELECT handle, name FROM companies`);
+// console.log(allCompanies)
 
 module.exports = {
   commonBeforeAll,

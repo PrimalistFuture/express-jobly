@@ -13,14 +13,24 @@ class Job {
      *
      * Returns { title, salaray, equity, companyHandle }
      *
-     * Throws BadRequestError if company already in database.
      * */
 
 
   static async create({ title, salary, equity, companyHandle }) {
-    // const duplicateCheck = await db.query(
-    //   `SELECT title, company_handle
-    //   FROM
+    console.log({ title, salary, equity, companyHandle });
+    const result = await db.query(
+      `INSERT INTO jobs (
+        title,
+        salary,
+        equity,
+        company_handle)
+      VALUES ($1, $2, $3, $4)
+      RETURNING id, title, salary, equity, company_handle AS companyHandle`,
+      [title, salary, equity, companyHandle]
+      );
+    const job = result.rows[0];
+        console.log(job, 'I am the job in create');
+    return job;
   }
 
 
