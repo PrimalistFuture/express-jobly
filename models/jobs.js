@@ -111,14 +111,16 @@ class Job {
     //   values: Object.values(dataToSearch),
     // };
   }
-  /** Given a job title, return data about job.
+  /** Given a job ID, return data about a single job.
+   *
+   *  Input: jobId
      *
      * Returns { title, salaray, equity, companyHandle }
      *
      * Throws NotFoundError if not found.
      **/
 
-  static async get(handle) {
+  static async get(jobId) {
     // const companyRes = await db.query(
     //   `SELECT handle,
     //             name,
@@ -138,19 +140,20 @@ class Job {
   }
 
 
-  /** Update job data with `data`.
+  /** Update job at given jobId with data from `data` object.
      *
      * This is a "partial update" --- it's fine if data doesn't contain all the
      * fields; this only changes provided ones.
      *
-     * Data can include: {title, salary, equity, companyHandle}
+     * Data can include: {title, salary, equity}
      *
      * Returns {title, salaray, equity, companyHandle}
      *
      * Throws NotFoundError if not found.
+     * Throws BadRequestError if passing in id or companyHandle or no data
      */
 
-  static async update(handle, data) {
+  static async update(jobId, data) {
     const { setCols, values } = sqlForPartialUpdate(data, {
       numEmployees: 'num_employees',
       logoUrl: 'logo_url',
