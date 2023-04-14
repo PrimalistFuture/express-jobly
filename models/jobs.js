@@ -25,10 +25,12 @@ class Job {
         equity,
         company_handle)
       VALUES ($1, $2, $3, $4)
-      RETURNING id, title, salary, equity, company_handle AS companyHandle`,
+      RETURNING id, title, salary, equity, company_handle AS "companyHandle"`,
       [title, salary, equity, companyHandle]
       );
-    const job = result.rows[0];
+
+    let job = result.rows[0];
+    job.equity =  parseFloat(job.equity)
         console.log(job, 'I am the job in create');
     return job;
   }

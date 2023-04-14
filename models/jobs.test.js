@@ -2,7 +2,7 @@
 
 const db = require('../db.js');
 const { BadRequestError, NotFoundError } = require('../expressError');
-const Job = require('./company.js');
+const Job = require('./jobs.js');
 const {
 	commonBeforeAll,
 	commonBeforeEach,
@@ -38,7 +38,7 @@ describe('create', function () {
 		title: 'Paper Boy',
 		salary: 12,
 		equity: 0,
-		company_handle: 'c1',
+		companyHandle: 'c1',
 	};
 
 	test('works', async function () {
@@ -50,24 +50,23 @@ describe('create', function () {
 			title: 'Paper Boy',
 			salary: 12,
 			equity: 0,
-			company_handle: 'c1',
+			companyHandle: 'c1',
 		});
     console.log('Just about to enter result');
 		const result = await db.query(
-			`SELECT title, salary, equity, company_handle
+			`SELECT id, title, salary, equity, company_handle as "companyHandle"
       FROM jobs
       WHERE id = $1`,
 			[job.id]
 		);
 		expect(
-			result.rows[0].toEqual({
+			result.rows[0]).toEqual({
 				id: expect.any(Number),
 				title: 'Paper Boy',
 				salary: 12,
-				equity: 0,
-				company_handle: 'c1',
-			})
-		);
+				equity: '0',
+				companyHandle: 'c1',
+			});
 	});
 });
 
