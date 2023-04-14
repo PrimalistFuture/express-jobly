@@ -37,7 +37,7 @@ describe('create', function () {
 	const newJob = {
 		title: 'Paper Boy',
 		salary: 12,
-		equity: 0,
+		equity: '0',
 		companyHandle: 'c1',
 	};
 
@@ -49,7 +49,7 @@ describe('create', function () {
 			id: expect.any(Number),
 			title: 'Paper Boy',
 			salary: 12,
-			equity: 0,
+			equity: '0',
 			companyHandle: 'c1',
 		});
     console.log('Just about to enter result');
@@ -72,91 +72,109 @@ describe('create', function () {
 
 /********************************* findAll */
 
-// describe('findAll', function () {
-// 	test('works: no filter', async function () {
-// 		let jobs = await Job.findAll();
-// 		expect(jobs).toEqual([
-// 			{
-// 				title: 'Paper Boy',
-// 				salary: 20000,
-// 				equity: 0.005,
-// 				company_handle: 'c1',
-// 			},
-// 			{
-// 				title: 'Paper Girl',
-// 				salary: 30000,
-// 				equity: 0.1,
-// 				company_handle: 'c2',
-// 			},
-// 			{
-// 				title: 'Paper Man',
-// 				salary: 10000,
-// 				equity: 0.005,
-// 				company_handle: 'c3',
-// 			},
-// 			{
-// 				title: 'Paper Woman',
-// 				salary: 10000,
-// 				equity: 0.005,
-// 				company_handle: 'c1',
-// 			},
-// 		]);
-// 	});
-// });
+describe('findAll', function () {
+	test('works: no filter', async function () {
+		let jobs = await Job.findAll();
+		expect(jobs).toEqual([
+			{
+				id: expect.any(Number),
+        title: 'Paper Boy',
+				salary: 20000,
+				equity: '0.005',
+				companyHandle: 'c1',
+			},
+			{
+        id: expect.any(Number),
+				title: 'Paper Girl',
+				salary: 30000,
+				equity: '0.1',
+				companyHandle: 'c2',
+			},
+			{
+        id: expect.any(Number),
+				title: 'Paper Man',
+				salary: 10000,
+				equity: '0.005',
+				companyHandle: 'c3',
+			},
+			{
+        id: expect.any(Number),
+				title: 'Paper Woman',
+				salary: 10000,
+				equity: '0.005',
+				companyHandle: 'c1',
+			},
+		]);
+	});
+});
 
-// /********************************** findWhere */
-// describe('findWhere', function () {
-// 	test('works: returns array of jobs', async function () {
-// 		const jobs = await Job.findWhere({ title: 'paper' });
-// 		expect(jobs).toEqual([
-// 			{
-// 				title: 'Paper Boy',
-// 				salary: 20000,
-// 				equity: 0.005,
-// 				company_handle: 'c1',
-// 			},
-// 		]);
-// 	});
-// 	test('throws NotFoundError if no results meet criteria', async function () {
-// 		try {
-// 			const jobs = await Job.findWhere({ title: 'Paper Being' });
-// 			throw Error('Fail Test: Job.findWhere');
-// 		} catch (error) {
-// 			expect(error instanceof NotFoundError).toBeTruthy();
-// 		}
-// 	});
-// });
+/********************************** findWhere */
+describe('findWhere', function () {
+
+	test('works: returns array of jobs', async function () {
+		const jobs = await Job.findWhere({ title: 'paper boy' });
+		expect(jobs).toEqual([
+			{
+        id: expect.any(Number),
+				title: 'Paper Boy',
+				salary: 20000,
+				equity: '0.005',
+				companyHandle: 'c1',
+			},
+		]);
+	});
+
+	test('throws NotFoundError if no results meet criteria', async function () {
+		try {
+			const jobs = await Job.findWhere({ title: 'Paper Being' });
+			throw Error('Fail Test: Job.findWhere');
+		} catch (error) {
+			expect(error instanceof NotFoundError).toBeTruthy();
+		}
+	});
+});
 
 // /************************************** Job.sqlClauseForFindWhere */
-// describe('sqlClauseForFindWhere', function () {
-// 	test('works: for one query parameter', function () {
-// 		const dataToSearch = { minSalary: 20000 };
-// 		const results = Job.sqlClauseForFindWhere(dataToSearch);
+describe('sqlClauseForFindWhere', function () {
+	test('works: for one query parameter', function () {
+		const dataToSearch = { minSalary: 20000 };
+		const results = Job.sqlClauseForFindWhere(dataToSearch);
 
-// 		expect(results).toEqual({
-// 			where: 'salary >= $1',
-// 			values: [20000],
-// 		});
-// 	});
-// 	test('works: for multiple query parameters', function () {
-// 		const dataToSearch = { minSalary: 20000, hasEquity: true, title: 'paper' };
-// 		const results = Job.sqlClauseForFindWhere(dataToSearch);
+		expect(results).toEqual({
+			where: 'salary >= $1',
+			values: [20000],
+		});
+	});
+	test('works: for multiple query parameters', function () {
+		const dataToSearch = { minSalary: 20000, hasEquity: true, title: 'paper' };
+		const results = Job.sqlClauseForFindWhere(dataToSearch);
 
-// 		expect(results).toEqual({
-// 			where: "salary >= $1 AND equity > $2 AND title ILIKE '%'|| $3 ||'%'",
-// 			values: [20000, 0.0, 'paper'],
-// 		});
-// 	});
-// 	test('throws bad request error if dataToSearch is empty', function () {
-// 		const dataToSearch = {};
-// 		try {
-// 			const results = Job.sqlClauseForFindWhere(dataToSearch);
-// 			throw Error('Fail Test: Job.sqlClauseForFindWhere');
-// 		} catch (error) {
-// 			expect(error instanceof BadRequestError).toBeTruthy();
-// 		}
-// 	});
-// });
+		expect(results).toEqual({
+			where: "salary >= $1 AND equity > $2 AND title ILIKE '%'|| $3 ||'%'",
+			values: [20000, '0.0', 'paper'],
+		});
+	});
+
+	test('throws bad request error if dataToSearch is empty', function () {
+		const dataToSearch = {};
+		try {
+			const results = Job.sqlClauseForFindWhere(dataToSearch);
+			throw Error('Fail Test: Job.sqlClauseForFindWhere');
+		} catch (error) {
+			expect(error instanceof BadRequestError).toBeTruthy();
+		}
+	});
+
+  test('throws bad request error if dataToSearch has invalid field', function () {
+		const dataToSearch = { description: 'A chill atmosphere.'};
+		try {
+			const results = Job.sqlClauseForFindWhere(dataToSearch);
+			throw Error('Fail Test: Job.sqlClauseForFindWhere');
+		} catch (error) {
+			expect(error instanceof BadRequestError).toBeTruthy();
+		}
+	});
+});
 
 // /************************************** get */
 

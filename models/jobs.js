@@ -30,7 +30,7 @@ class Job {
       );
 
     let job = result.rows[0];
-    job.equity =  parseFloat(job.equity)
+
         console.log(job, 'I am the job in create');
     return job;
   }
@@ -39,54 +39,57 @@ class Job {
 
   /** Find all jobs.
    *
-   * Returns [{ title, salaray, equity, companyHandle }, ...]
+   * Returns [{ id, title, salary, equity, companyHandle }, ...]
    * */
 
   static async findAll() {
-    const jobsRes = await db.query(
-
-    );
+    const jobsRes = await db.query(`
+      SELECT id, title, salary, equity, company_handle AS "companyHandle"
+        FROM jobs`);
     return jobsRes.rows;
   }
 
 
-  /** Find all companies that match given criteria object.
-     * Accepts { maxEmployees: 2,
-     *           nameLike: 'c1',
-     *           minEmployees: 1
+  /** Find all jobs that match given criteria object.
+   *
+     * Accepts { title: 'paper',
+     *           hasEquity: true,
+     *           minSalary: 20000
      *         }
 
      * Returns [
-                { handle,
-                  name,
-                  description,
-                  numEmployees,
-                  logoUrl
+                { id,
+                  title,
+                  salary,
+                  equity,
+                  companyHandle
                 }, ...
               ]
      */
   static async findWhere(criteria) {
-    // const { where, values } = Company.sqlClauseForFindWhere(criteria);
-    // const companiesRes = await db.query(
-    // 	`SELECT handle,
-    //           name,
-    //           description,
-    //           num_employees AS "numEmployees",
-    //           logo_url AS "logoUrl"
-    //     FROM companies
-    //     WHERE ${where}`,
-    // 	values
-    // );
-    // const company = companiesRes.rows;
+    const { where, values } = Job.sqlClauseForFindWhere(criteria);
+    const jobsResults = await db.query(
+     `SELECT id,
+             title,
+             salary,
+             equity,
+             company_handle AS "companyHandle"
+        FROM jobs
+       WHERE ${where}`,
+    	values
+    );
+    const jobs = jobsResults.rows;
 
-    // if (company.length === 0)
-    // 	throw new NotFoundError('No companies match the criteria');
+    if (jobs.length === 0)
+    	throw new NotFoundError('No jobs match the criteria');
 
-    // return company;
+    return jobs;
   }
 
   /** Return SQL to populate WHERE clause in findWhere function query.
    *  Accept one object, the search filter criteria
+   *
+   *  Can only accept the criteria: title, minSalary, and hasEquity.
    *
    * 	ACCEPTS: { title: "net", minSalary: 20, hasEquity: 30 }
    *
@@ -96,32 +99,36 @@ class Job {
    *
    */
   static sqlClauseForFindWhere(dataToSearch) {
-    // const keys = Object.keys(dataToSearch);
-    // if (keys.length === 0) throw new BadRequestError('No data');
+    const keys = Object.keys(dataToSearch);
+    if (keys.length === 0) throw new BadRequestError('No data');
 
-    // const validFields = ['minEmployees', 'maxEmployees', 'nameLike'];
+    const validFields = ['title', 'minSalary', 'hasEquity'];
 
-    // if (dataToSearch?.minEmployees > dataToSearch?.maxEmployees) {
-    //   throw new BadRequestError('Min employees cannot exceed max employees.');
-    // }
+    const valuesArray = [];
+    const templateArray = keys.map((criteria, index) => {
+      if (!validFields.includes(criteria))
+        throw new BadRequestError('Invalid search criteria');
+      const paramNum = index + 1;
+      if (criteria === 'title') {
+        valuesArray.push(dataToSearch[criteria]);
+        return `title ILIKE '%'|| $${paramNum} ||'%'`;
+      } else if (criteria === 'minSalary') {
+        valuesArray.push(dataToSearch[criteria]);
+        return `salary >= $${paramNum}`;
+      } else if (criteria === 'hasEquity' && dataToSearch[criteria] === true) {
+        valuesArray.push('0.0');
+        return `equity > $${paramNum}`;
+      } else if (criteria === 'hasEquity' && dataToSearch[criteria] === false) {
+        valuesArray.push('0.0');
+        return `equity = $${paramNum}`;
+      }
 
-    // const templateArray = keys.map((criteria, index) => {
-    //   if (!validFields.includes(criteria))
-    //     throw new BadRequestError('Invalid search criteria');
-    //   const paramNum = index + 1;
-    //   if (criteria === 'nameLike') {
-    //     return `handle ILIKE '%'|| $${paramNum} ||'%'`;
-    //   } else if (criteria === 'minEmployees') {
-    //     return `num_employees >= $${paramNum}`;
-    //   } else if (criteria === 'maxEmployees') {
-    //     return `num_employees <= $${paramNum}`;
-    //   }
-    // });
+    });
 
-    // return {
-    //   where: templateArray.join(' AND '),
-    //   values: Object.values(dataToSearch),
-    // };
+    return {
+      where: templateArray.join(' AND '),
+      values: valuesArray,
+    };
   }
   /** Given a job ID, return data about a single job.
    *
